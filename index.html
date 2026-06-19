@@ -1,54 +1,893 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>SRP Digital Studios</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SRP Digital Studios</title>
+    
+    <link rel="icon" type="image/png" href="Favicon D.png">
 
-<style>
-body{
-margin:0;
-font-family:Arial,sans-serif;
-background:#0f172a;
-color:white;
-text-align:center;
-}
+    <style>
+        :root {
+            --bg-deep: #040509;
+            --bg-glow-gradient: radial-gradient(circle at 75% 40%, #15113a 0%, #04050a 60%);
+            --card-glass: rgba(12, 15, 30, 0.75);
+            --neon-cyan: #00f0ff;
+            --brand-blue: #0056ff;
+            --matrix-magenta: #e01a89;
+            --neon-green: #00ff66;
+            --warning-amber: #ffaa00;
+            --text-main: #ffffff;
+            --text-muted: #94a3b8;
+            --border-neon: rgba(0, 240, 255, 0.15);
+        }
 
-.hero{
-padding:100px 20px;
-}
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: '-apple-system', BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+        }
 
-h1{
-font-size:60px;
-margin-bottom:10px;
-}
+        html, body {
+            height: 100%;
+            min-height: 100vh;
+            margin: 0;
+            padding: 0;
+            background-color: var(--bg-deep);
+        }
 
-p{
-font-size:22px;
-color:#cbd5e1;
-}
+        body {
+            background-image: var(--bg-glow-gradient);
+            color: var(--text-main);
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
+            position: relative;
+        }
 
-.btn{
-display:inline-block;
-padding:15px 30px;
-background:#2563eb;
-color:white;
-text-decoration:none;
-border-radius:10px;
-margin-top:20px;
-}
-</style>
+        /* Tech Grid Overlay Map */
+        body::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                linear-gradient(rgba(255, 255, 255, 0.006) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255, 255, 255, 0.006) 1px, transparent 1px);
+            background-size: 50px 50px;
+            z-index: -2;
+            pointer-events: none;
+        }
+
+        /* Ambient Glow Containers */
+        .ambient-glow-environment {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .glow-orb-1 {
+            position: absolute;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(224, 26, 137, 0.18) 0%, transparent 70%);
+            border-radius: 50%;
+            bottom: 10%;
+            right: 25%;
+            filter: blur(40px);
+        }
+
+        .glow-orb-2 {
+            position: absolute;
+            width: 550px;
+            height: 550px;
+            background: radial-gradient(circle, rgba(0, 240, 255, 0.12) 0%, transparent 70%);
+            border-radius: 50%;
+            bottom: -50px;
+            right: 5%;
+            filter: blur(50px);
+        }
+
+        /* Header Navigation Styles */
+        header {
+            flex-shrink: 0;
+            display: flex;
+            justify-content: flex-start;
+            align-items: center;
+            padding: 24px 8%;
+            background: rgba(4, 5, 9, 0.7);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .logo-box {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo-box img {
+            height: 32px;
+            width: auto;
+            object-fit: contain;
+            display: block;
+        }
+
+        .logo-box span {
+            font-size: 1.15rem;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            background: linear-gradient(90deg, #ffffff 0%, #cbd5e1 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* Main Workspace Framework */
+        main {
+            flex: 1 0 auto;
+            max-width: 1500px;
+            width: 100%;
+            margin: 0 auto;
+            padding: 40px 6% 60px 6%;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 60px;
+        }
+
+        /* Left Dashboard Interface Column */
+        .interface-column {
+            flex: 1;
+            max-width: 540px;
+            min-width: 440px;
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+            animation: renderSlide 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+
+        .status-badge {
+            display: inline-block;
+            align-self: flex-start;
+            font-size: 0.72rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            color: var(--neon-cyan);
+            background: rgba(0, 240, 255, 0.04);
+            border: 1px solid rgba(0, 240, 255, 0.25);
+            padding: 8px 18px;
+            border-radius: 4px;
+        }
+
+        .interface-column h1 {
+            font-size: 3.6rem;
+            font-weight: 800;
+            line-height: 1.15;
+            letter-spacing: -2px;
+            margin-top: -10px;
+        }
+
+        .interface-column h1 span {
+            background: linear-gradient(90deg, var(--brand-blue) 0%, var(--neon-cyan) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .interface-column p.hero-desc {
+            font-size: 1.12rem;
+            line-height: 1.65;
+            color: var(--text-muted);
+        }
+
+        /* Card Widget Box */
+        .management-widget {
+            background: var(--card-glass);
+            border: 1px solid var(--border-neon);
+            border-radius: 12px;
+            padding: 35px;
+            box-shadow: 0 40px 80px rgba(0, 0, 0, 0.6), inset 0 1px 1px rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+        }
+
+        .management-widget h2 {
+            font-size: 1.45rem;
+            font-weight: 700;
+            margin-bottom: 12px;
+            letter-spacing: -0.5px;
+        }
+
+        .management-widget p {
+            font-size: 0.98rem;
+            color: var(--text-muted);
+            line-height: 1.6;
+            margin-bottom: 25px;
+        }
+
+        /* Domain Display Box Configured for Perfect Single Line Formatting */
+        .domain-display-box {
+            background: rgba(4, 5, 10, 0.6);
+            border: 1px dashed rgba(0, 240, 255, 0.3);
+            border-radius: 6px;
+            padding: 14px 12px;
+            margin-bottom: 25px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            width: 100%;
+        }
+
+        .domain-string {
+            font-family: 'Courier New', Courier, monospace;
+            font-weight: 700;
+            font-size: 0.88rem;
+            color: var(--neon-cyan);
+            letter-spacing: -0.2px;
+            white-space: nowrap;
+            text-align: center;
+        }
+
+        /* Admin Node Tag Layout */
+        .admin-node-tag {
+            background: linear-gradient(135deg, rgba(0, 86, 255, 0.12) 0%, rgba(4, 5, 10, 0.9) 100%);
+            border: 1px solid rgba(0, 86, 255, 0.35);
+            padding: 16px;
+            border-radius: 6px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            position: relative;
+        }
+
+        .admin-node-tag::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(90deg, var(--neon-cyan), var(--matrix-magenta));
+        }
+
+        .tag-lbl {
+            font-size: 0.68rem;
+            text-transform: uppercase;
+            font-weight: 700;
+            color: var(--text-muted);
+            letter-spacing: 2.5px;
+        }
+
+        .tag-val {
+            font-size: 1.35rem;
+            font-weight: 700;
+            color: var(--text-main);
+            letter-spacing: 0.5px;
+            text-shadow: 0 0 15px rgba(0, 240, 255, 0.25);
+        }
+
+        /* Hardware Showcase Arena */
+        .hardware-showcase-column {
+            flex: 1.5;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            perspective: 3200px;
+            min-height: 620px;
+        }
+
+        /* Dual Tower Structural Arrangement - No Overlaps */
+        .dual-cluster-deck {
+            display: flex;
+            gap: 75px; 
+            transform-style: preserve-3d;
+            padding: 20px;
+        }
+
+        /* Core Advanced 3D Pivot Assembly */
+        .isometric-rig {
+            transform-style: preserve-3d;
+            opacity: 0;
+            will-change: transform, opacity;
+        }
+
+        .rig-alpha {
+            animation: 
+                cinematicFoldDownAlpha 2.2s cubic-bezier(0.15, 0.85, 0.2, 1) forwards,
+                premiumMicroFloatAlpha 7s ease-in-out infinite 2.2s;
+        }
+
+        .rig-beta {
+            animation: 
+                cinematicFoldDownBeta 2.2s cubic-bezier(0.15, 0.85, 0.2, 1) 0.15s forwards,
+                premiumMicroFloatBeta 7s ease-in-out infinite 2.35s;
+        }
+
+        /* High-Density Modular Chassis Architecture */
+        .server-rack-tower {
+            position: relative;
+            width: 320px;
+            height: 420px;
+            background: linear-gradient(135deg, #0b0a1a 0%, #030307 100%);
+            border-radius: 16px;
+            box-shadow: 
+                -30px 45px 85px rgba(0, 0, 0, 0.9), 
+                0px 10px 45px rgba(0, 240, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            padding: 24px 18px;
+            display: flex;
+            flex-direction: column;
+            gap: 7px;
+        }
+
+        /* High-End Tech ID Labels on Server Cases */
+        .rack-panel-id {
+            font-size: 0.62rem;
+            font-weight: 800;
+            color: var(--text-muted);
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-bottom: 4px;
+            display: flex;
+            justify-content: space-between;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            padding-bottom: 6px;
+        }
+
+        .rack-panel-id span {
+            color: var(--neon-cyan);
+            text-shadow: 0 0 8px rgba(0, 240, 255, 0.4);
+        }
+
+        /* Server Module Blade Unit */
+        .server-blade-unit {
+            height: 24px;
+            background: linear-gradient(90deg, #05040f 0%, #0e0b1f 100%);
+            border-radius: 4px;
+            border-bottom: 2px solid rgba(0, 0, 0, 0.8);
+            border-right: 1px solid rgba(255, 255, 255, 0.02);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 10px;
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.25s ease, background 0.25s ease;
+        }
+
+        .server-blade-unit:hover {
+            transform: translateZ(20px);
+            background: linear-gradient(90deg, #0b091c 0%, #15112e 100%);
+        }
+
+        /* Neon Guide Light Trim */
+        .server-blade-unit::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            height: 100%;
+            width: 3px;
+            background: var(--neon-cyan);
+            box-shadow: 0 0 6px var(--neon-cyan);
+            z-index: 2;
+        }
+
+        /* Twin High-RPM Hardware Cooling Fans */
+        .blade-fan-bays {
+            display: flex;
+            gap: 4px;
+            z-index: 2;
+            align-items: center;
+        }
+
+        .cooling-fan-node {
+            width: 13px;
+            height: 13px;
+            border-radius: 50%;
+            border: 1px solid rgba(0, 240, 255, 0.25);
+            background: radial-gradient(circle, rgba(0, 86, 255, 0.15) 0%, transparent 75%);
+            position: relative;
+        }
+        
+        .cooling-fan-node::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 9px;
+            height: 2px;
+            background-color: rgba(255, 255, 255, 0.4);
+            transform: translate(-50%, -50%);
+            animation: fanSpin 0.12s infinite linear;
+        }
+
+        /* Center-Mounted High Density Fiber Port Arrays */
+        .blade-port-matrix {
+            display: flex;
+            gap: 2px;
+            z-index: 2;
+            margin-left: 12px;
+        }
+
+        .mini-port {
+            width: 5px;
+            height: 4px;
+            background-color: #020204;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 1px;
+        }
+        .mini-port.linked {
+            background-color: var(--brand-blue);
+            box-shadow: 0 0 4px var(--brand-blue);
+        }
+
+        /* Side Vent Micro-Grills */
+        .blade-vent-grill {
+            display: flex;
+            gap: 4px;
+            z-index: 2;
+            margin-left: auto;
+            margin-right: 12px;
+        }
+
+        .vent-line {
+            width: 20px;
+            height: 3px;
+            background-color: #020105;
+            border-radius: 1px;
+        }
+
+        /* Continuous High-Speed Scanning Waves */
+        .processing-bar {
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 140px;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(0, 240, 255, 0.12), transparent);
+            animation: dataStream 2.4s infinite linear;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .processing-pulse {
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 70px;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(224, 26, 137, 0.14), transparent);
+            animation: dataStream 1.5s infinite linear;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        /* Diagnostics Fiber Optic Lights */
+        .status-led-cluster {
+            display: flex;
+            gap: 5px;
+            z-index: 2;
+        }
+
+        .led-dot {
+            width: 4px;
+            height: 4px;
+            border-radius: 50%;
+            background-color: #05120a;
+        }
+
+        .led-dot.active-green {
+            background-color: var(--neon-green);
+            box-shadow: 0 0 5px var(--neon-green);
+            animation: pulsateGlow 0.3s infinite alternate ease-in-out;
+        }
+
+        .led-dot.pulse-blue {
+            background-color: var(--neon-cyan);
+            box-shadow: 0 0 5px var(--neon-cyan);
+            animation: pulsateGlow 0.6s infinite alternate-reverse ease-in-out;
+        }
+
+        .led-dot.alert-amber {
+            background-color: var(--warning-amber);
+            box-shadow: 0 0 5px var(--warning-amber);
+            animation: pulsateGlow 0.4s infinite alternate ease-in-out;
+        }
+
+        .led-dot.link-magenta {
+            background-color: var(--matrix-magenta);
+            box-shadow: 0 0 5px var(--matrix-magenta);
+            animation: pulsateGlow 0.5s infinite alternate-reverse ease-in-out;
+        }
+
+        /* Async Timing Distribution */
+        .server-blade-unit:nth-child(2n) .processing-bar { animation-delay: 0.4s; animation-duration: 2s; }
+        .server-blade-unit:nth-child(3n) .processing-pulse { animation-delay: 0.7s; animation-duration: 1.3s; }
+        .server-blade-unit:nth-child(4n) .processing-bar { animation-delay: 1.1s; animation-duration: 2.8s; }
+
+        /* Clean Professional Footer System */
+        footer {
+            flex-shrink: 0;
+            background-color: #020306;
+            border-top: 1px solid rgba(255, 255, 255, 0.03);
+            padding: 24px 8%;
+            z-index: 10;
+        }
+
+        .footer-wrapper {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .footer-bottom-left {
+            font-size: 0.82rem;
+            color: var(--text-muted);
+            display: flex;
+            align-items: center;
+            gap: 24px;
+        }
+
+        .footer-bottom-center {
+            font-size: 0.82rem;
+            color: var(--text-main);
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+
+        .footer-logo {
+            height: 20px;
+            width: auto;
+            object-fit: contain;
+            display: block;
+            opacity: 0.85;
+        }
+
+        /* Precise 3D Fall-down matrices to eliminate overlapping fields */
+        @keyframes cinematicFoldDownAlpha {
+            0% {
+                opacity: 0;
+                transform: rotateX(85deg) rotateY(0deg) rotateZ(-70deg) translateZ(-300px) translateX(-100px) scale(0.8);
+            }
+            60% { opacity: 1; }
+            100% {
+                opacity: 1;
+                transform: rotateX(34deg) rotateY(0deg) rotateZ(-40deg) translateZ(0) translateX(-30px) scale(1);
+            }
+        }
+
+        @keyframes cinematicFoldDownBeta {
+            0% {
+                opacity: 0;
+                transform: rotateX(85deg) rotateY(0deg) rotateZ(-70deg) translateZ(-300px) translateX(100px) scale(0.8);
+            }
+            60% { opacity: 1; }
+            100% {
+                opacity: 1;
+                transform: rotateX(34deg) rotateY(0deg) rotateZ(-40deg) translateZ(0) translateX(30px) scale(1);
+            }
+        }
+
+        /* Balanced Micro Float Operations */
+        @keyframes premiumMicroFloatAlpha {
+            0% { transform: rotateX(34deg) rotateY(0deg) rotateZ(-40deg) translateZ(0) translateX(-30px); }
+            50% { transform: rotateX(31deg) rotateY(1deg) rotateZ(-38deg) translateZ(12px) translateX(-30px); }
+            100% { transform: rotateX(34deg) rotateY(0deg) rotateZ(-40deg) translateZ(0) translateX(-30px); }
+        }
+
+        @keyframes premiumMicroFloatBeta {
+            0% { transform: rotateX(34deg) rotateY(0deg) rotateZ(-40deg) translateZ(0) translateX(30px); }
+            50% { transform: rotateX(32deg) rotateY(-1deg) rotateZ(-39deg) translateZ(18px) translateX(30px); }
+            100% { transform: rotateX(34deg) rotateY(0deg) rotateZ(-40deg) translateZ(0) translateX(30px); }
+        }
+
+        @keyframes fanSpin {
+            0% { transform: translate(-50%, -50%) rotate(0deg); }
+            100% { transform: translate(-50%, -50%) rotate(360deg); }
+        }
+
+        @keyframes renderSlide {
+            from { opacity: 0; transform: translateY(25px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes pulsateGlow {
+            0% { opacity: 0.3; filter: brightness(0.8); }
+            100% { opacity: 1; filter: brightness(1.3) drop-shadow(0 0 3px var(--neon-cyan)); }
+        }
+
+        @keyframes dataStream {
+            0% { left: -45%; }
+            100% { left: 125%; }
+        }
+
+        /* Responsive Mobile Layout Adjustments */
+        @media (max-width: 1200px) {
+            main {
+                flex-direction: column-reverse;
+                text-align: center;
+                padding-top: 30px;
+                gap: 40px;
+            }
+            .interface-column {
+                max-width: 100%;
+                min-width: 100%;
+                align-items: center;
+            }
+            .status-badge {
+                align-self: center;
+            }
+            .interface-column h1 {
+                font-size: 3rem;
+            }
+            .management-widget {
+                text-align: center;
+                width: 100%;
+            }
+            header {
+                justify-content: center;
+            }
+            .hardware-showcase-column {
+                min-height: auto;
+                width: 100%;
+                overflow: hidden;
+                padding: 30px 0;
+            }
+            .dual-cluster-deck {
+                gap: 20px;
+            }
+            .server-rack-tower {
+                width: 170px;
+                height: 310px;
+                padding: 12px 8px;
+            }
+            .blade-vent-grill, .blade-port-matrix {
+                display: none;
+            }
+            .footer-wrapper {
+                flex-direction: column;
+                text-align: center;
+                gap: 16px;
+            }
+            .footer-bottom-left {
+                flex-direction: column-reverse;
+                gap: 16px;
+            }
+            .isometric-rig {
+                transform: rotateX(25deg) rotateZ(-25deg) scale(0.85);
+                animation: none !important; 
+                opacity: 1 !important;
+            }
+        }
+    </style>
 </head>
 <body>
 
-<div class="hero">
-<h1>SRP Digital Studios</h1>
-<p>Web Development • Hosting • Digital Solutions</p>
+    <div class="ambient-glow-environment">
+        <div class="glow-orb-1"></div>
+        <div class="glow-orb-2"></div>
+    </div>
 
-<a href="https://sqrm.srpdigitalstudios.qzz.io" class="btn">
-Visit SQRM
-</a>
-</div>
+    <header>
+        <div class="logo-box">
+            <img src="Icon Logo D.png" alt="SRP Brand Icon">
+            <span>SRP Digital Studios</span>
+        </div>
+    </header>
+
+    <main>
+        <section class="interface-column">
+            <div class="status-badge">Dedicated Node Architecture</div>
+            <h1>Private Server <span>Network</span></h1>
+            <p class="hero-desc">Welcome to the isolated application environment engineered by SRP Digital Studios. Providing secure, high-speed virtualization containers for custom web applications.</p>
+            
+            <div class="management-widget">
+                <h2>Allocate Domain Space</h2>
+                <p>Ready to establish a dedicated directory and connect live operational subdomains securely beneath our primary network cluster infrastructure. If you want your web hosted, contact me and I will provide the domain:</p>
+                
+                <div class="domain-display-box">
+                    <div class="domain-string">user.srpdigitalstudiosservers.qzz.io</div>
+                </div>
+                
+                <div class="admin-node-tag">
+                    <span class="tag-lbl">Provisioning Administrator</span>
+                    <span class="tag-val">Smit Patel</span>
+                </div>
+            </div>
+        </section>
+
+        <section class="hardware-showcase-column">
+            <div class="dual-cluster-deck">
+                
+                <div class="isometric-rig rig-alpha">
+                    <div class="server-rack-tower">
+                        <div class="rack-panel-id">Node Deck <span>A-01</span></div>
+                        
+                        <div class="server-blade-unit">
+                            <div class="processing-bar"></div><div class="processing-pulse"></div>
+                            <div class="blade-fan-bays"><div class="cooling-fan-node"></div><div class="cooling-fan-node"></div></div>
+                            <div class="blade-port-matrix"><div class="mini-port linked"></div><div class="mini-port"></div></div>
+                            <div class="blade-vent-grill"><div class="vent-line"></div><div class="vent-line"></div></div>
+                            <div class="status-led-cluster"><div class="led-dot active-green"></div><div class="led-dot pulse-blue"></div></div>
+                        </div>
+                        <div class="server-blade-unit">
+                            <div class="processing-bar"></div><div class="processing-pulse"></div>
+                            <div class="blade-fan-bays"><div class="cooling-fan-node"></div><div class="cooling-fan-node"></div></div>
+                            <div class="blade-port-matrix"><div class="mini-port linked"></div><div class="mini-port linked"></div></div>
+                            <div class="blade-vent-grill"><div class="vent-line"></div><div class="vent-line"></div></div>
+                            <div class="status-led-cluster"><div class="led-dot active-green"></div><div class="led-dot link-magenta"></div></div>
+                        </div>
+                        <div class="server-blade-unit">
+                            <div class="processing-bar"></div><div class="processing-pulse"></div>
+                            <div class="blade-fan-bays"><div class="cooling-fan-node"></div><div class="cooling-fan-node"></div></div>
+                            <div class="blade-port-matrix"><div class="mini-port"></div><div class="mini-port"></div></div>
+                            <div class="blade-vent-grill"><div class="vent-line"></div><div class="vent-line"></div></div>
+                            <div class="status-led-cluster"><div class="led-dot active-green"></div><div class="led-dot"></div></div>
+                        </div>
+                        <div class="server-blade-unit">
+                            <div class="processing-bar"></div><div class="processing-pulse"></div>
+                            <div class="blade-fan-bays"><div class="cooling-fan-node"></div><div class="cooling-fan-node"></div></div>
+                            <div class="blade-port-matrix"><div class="mini-port linked"></div><div class="mini-port"></div></div>
+                            <div class="blade-vent-grill"><div class="vent-line"></div><div class="vent-line"></div></div>
+                            <div class="status-led-cluster"><div class="led-dot alert-amber"></div><div class="led-dot pulse-blue"></div></div>
+                        </div>
+                        <div class="server-blade-unit">
+                            <div class="processing-bar"></div><div class="processing-pulse"></div>
+                            <div class="blade-fan-bays"><div class="cooling-fan-node"></div><div class="cooling-fan-node"></div></div>
+                            <div class="blade-port-matrix"><div class="mini-port linked"></div><div class="mini-port linked"></div></div>
+                            <div class="blade-vent-grill"><div class="vent-line"></div><div class="vent-line"></div></div>
+                            <div class="status-led-cluster"><div class="led-dot active-green"></div><div class="led-dot link-magenta"></div></div>
+                        </div>
+                        <div class="server-blade-unit">
+                            <div class="processing-bar"></div><div class="processing-pulse"></div>
+                            <div class="blade-fan-bays"><div class="cooling-fan-node"></div><div class="cooling-fan-node"></div></div>
+                            <div class="blade-port-matrix"><div class="mini-port"></div><div class="mini-port"></div></div>
+                            <div class="blade-vent-grill"><div class="vent-line"></div><div class="vent-line"></div></div>
+                            <div class="status-led-cluster"><div class="led-dot alert-amber"></div><div class="led-dot pulse-blue"></div></div>
+                        </div>
+                        <div class="server-blade-unit">
+                            <div class="processing-bar"></div><div class="processing-pulse"></div>
+                            <div class="blade-fan-bays"><div class="cooling-fan-node"></div><div class="cooling-fan-node"></div></div>
+                            <div class="blade-port-matrix"><div class="mini-port linked"></div><div class="mini-port"></div></div>
+                            <div class="blade-vent-grill"><div class="vent-line"></div><div class="vent-line"></div></div>
+                            <div class="status-led-cluster"><div class="led-dot active-green"></div><div class="led-dot pulse-blue"></div></div>
+                        </div>
+                        <div class="server-blade-unit">
+                            <div class="processing-bar"></div><div class="processing-pulse"></div>
+                            <div class="blade-fan-bays"><div class="cooling-fan-node"></div><div class="cooling-fan-node"></div></div>
+                            <div class="blade-port-matrix"><div class="mini-port linked"></div><div class="mini-port linked"></div></div>
+                            <div class="blade-vent-grill"><div class="vent-line"></div><div class="vent-line"></div></div>
+                            <div class="status-led-cluster"><div class="led-dot active-green"></div><div class="led-dot link-magenta"></div></div>
+                        </div>
+                        <div class="server-blade-unit">
+                            <div class="processing-bar"></div><div class="processing-pulse"></div>
+                            <div class="blade-fan-bays"><div class="cooling-fan-node"></div><div class="cooling-fan-node"></div></div>
+                            <div class="blade-port-matrix"><div class="mini-port linked"></div><div class="mini-port"></div></div>
+                            <div class="blade-vent-grill"><div class="vent-line"></div><div class="vent-line"></div></div>
+                            <div class="status-led-cluster"><div class="led-dot active-green"></div><div class="led-dot pulse-blue"></div></div>
+                        </div>
+                        <div class="server-blade-unit">
+                            <div class="processing-bar"></div><div class="processing-pulse"></div>
+                            <div class="blade-fan-bays"><div class="cooling-fan-node"></div><div class="cooling-fan-node"></div></div>
+                            <div class="blade-port-matrix"><div class="mini-port"></div><div class="mini-port linked"></div></div>
+                            <div class="blade-vent-grill"><div class="vent-line"></div><div class="vent-line"></div></div>
+                            <div class="status-led-cluster"><div class="led-dot active-green"></div><div class="led-dot pulse-blue"></div></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="isometric-rig rig-beta">
+                    <div class="server-rack-tower">
+                        <div class="rack-panel-id">Node Deck <span>B-02</span></div>
+                        
+                        <div class="server-blade-unit">
+                            <div class="processing-bar"></div><div class="processing-pulse"></div>
+                            <div class="blade-fan-bays"><div class="cooling-fan-node"></div><div class="cooling-fan-node"></div></div>
+                            <div class="blade-port-matrix"><div class="mini-port linked"></div><div class="mini-port"></div></div>
+                            <div class="blade-vent-grill"><div class="vent-line"></div><div class="vent-line"></div></div>
+                            <div class="status-led-cluster"><div class="led-dot active-green"></div><div class="led-dot pulse-blue"></div></div>
+                        </div>
+                        <div class="server-blade-unit">
+                            <div class="processing-bar"></div><div class="processing-pulse"></div>
+                            <div class="blade-fan-bays"><div class="cooling-fan-node"></div><div class="cooling-fan-node"></div></div>
+                            <div class="blade-port-matrix"><div class="mini-port linked"></div><div class="mini-port linked"></div></div>
+                            <div class="blade-vent-grill"><div class="vent-line"></div><div class="vent-line"></div></div>
+                            <div class="status-led-cluster"><div class="led-dot active-green"></div><div class="led-dot link-magenta"></div></div>
+                        </div>
+                        <div class="server-blade-unit">
+                            <div class="processing-bar"></div><div class="processing-pulse"></div>
+                            <div class="blade-fan-bays"><div class="cooling-fan-node"></div><div class="cooling-fan-node"></div></div>
+                            <div class="blade-port-matrix"><div class="mini-port"></div><div class="mini-port"></div></div>
+                            <div class="blade-vent-grill"><div class="vent-line"></div><div class="vent-line"></div></div>
+                            <div class="status-led-cluster"><div class="led-dot active-green"></div><div class="led-dot"></div></div>
+                        </div>
+                        <div class="server-blade-unit">
+                            <div class="processing-bar"></div><div class="processing-pulse"></div>
+                            <div class="blade-fan-bays"><div class="cooling-fan-node"></div><div class="cooling-fan-node"></div></div>
+                            <div class="blade-port-matrix"><div class="mini-port linked"></div><div class="mini-port"></div></div>
+                            <div class="blade-vent-grill"><div class="vent-line"></div><div class="vent-line"></div></div>
+                            <div class="status-led-cluster"><div class="led-dot alert-amber"></div><div class="led-dot pulse-blue"></div></div>
+                        </div>
+                        <div class="server-blade-unit">
+                            <div class="processing-bar"></div><div class="processing-pulse"></div>
+                            <div class="blade-fan-bays"><div class="cooling-fan-node"></div><div class="cooling-fan-node"></div></div>
+                            <div class="blade-port-matrix"><div class="mini-port linked"></div><div class="mini-port linked"></div></div>
+                            <div class="blade-vent-grill"><div class="vent-line"></div><div class="vent-line"></div></div>
+                            <div class="status-led-cluster"><div class="led-dot active-green"></div><div class="led-dot link-magenta"></div></div>
+                        </div>
+                        <div class="server-blade-unit">
+                            <div class="processing-bar"></div><div class="processing-pulse"></div>
+                            <div class="blade-fan-bays"><div class="cooling-fan-node"></div><div class="cooling-fan-node"></div></div>
+                            <div class="blade-port-matrix"><div class="mini-port"></div><div class="mini-port"></div></div>
+                            <div class="blade-vent-grill"><div class="vent-line"></div><div class="vent-line"></div></div>
+                            <div class="status-led-cluster"><div class="led-dot alert-amber"></div><div class="led-dot pulse-blue"></div></div>
+                        </div>
+                        <div class="server-blade-unit">
+                            <div class="processing-bar"></div><div class="processing-pulse"></div>
+                            <div class="blade-fan-bays"><div class="cooling-fan-node"></div><div class="cooling-fan-node"></div></div>
+                            <div class="blade-port-matrix"><div class="mini-port linked"></div><div class="mini-port"></div></div>
+                            <div class="blade-vent-grill"><div class="vent-line"></div><div class="vent-line"></div></div>
+                            <div class="status-led-cluster"><div class="led-dot active-green"></div><div class="led-dot pulse-blue"></div></div>
+                        </div>
+                        <div class="server-blade-unit">
+                            <div class="processing-bar"></div><div class="processing-pulse"></div>
+                            <div class="blade-fan-bays"><div class="cooling-fan-node"></div><div class="cooling-fan-node"></div></div>
+                            <div class="blade-port-matrix"><div class="mini-port linked"></div><div class="mini-port linked"></div></div>
+                            <div class="blade-vent-grill"><div class="vent-line"></div><div class="vent-line"></div></div>
+                            <div class="status-led-cluster"><div class="led-dot active-green"></div><div class="led-dot link-magenta"></div></div>
+                        </div>
+                        <div class="server-blade-unit">
+                            <div class="processing-bar"></div><div class="processing-pulse"></div>
+                            <div class="blade-fan-bays"><div class="cooling-fan-node"></div><div class="cooling-fan-node"></div></div>
+                            <div class="blade-port-matrix"><div class="mini-port linked"></div><div class="mini-port"></div></div>
+                            <div class="blade-vent-grill"><div class="vent-line"></div><div class="vent-line"></div></div>
+                            <div class="status-led-cluster"><div class="led-dot active-green"></div><div class="led-dot pulse-blue"></div></div>
+                        </div>
+                        <div class="server-blade-unit">
+                            <div class="processing-bar"></div><div class="processing-pulse"></div>
+                            <div class="blade-fan-bays"><div class="cooling-fan-node"></div><div class="cooling-fan-node"></div></div>
+                            <div class="blade-port-matrix"><div class="mini-port"></div><div class="mini-port linked"></div></div>
+                            <div class="blade-vent-grill"><div class="vent-line"></div><div class="vent-line"></div></div>
+                            <div class="status-led-cluster"><div class="led-dot active-green"></div><div class="led-dot pulse-blue"></div></div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="footer-wrapper">
+            <div class="footer-bottom-left">
+                <span>&copy; 2026 SRP Digital Studios. All rights reserved.</span>
+                <img src="Horizontal logo D.png" class="footer-logo" alt="SRP Corporate Logo Banner">
+            </div>
+            <div class="footer-bottom-center">
+                By SRP Digital Studios
+            </div>
+        </div>
+    </footer>
 
 </body>
 </html>

@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Catastrophic System Failure (500) | SRP Digital Studios</title>
+    
+    <link rel="icon" type="image/png" href="Favicon D.png">
+
+    <style>
+        :root {
+            --bg-deep: #040306;
+            /* Changed to a direct deep crimson radial threat light for a unique 500 variance */
+            --bg-glow-gradient: radial-gradient(circle at 50% 50%, #290a14 0%, #040306 75%);
+            --card-glass: rgba(18, 10, 14, 0.8);
+            --neon-cyan: #00f0ff;
+            --error-red: #ff2a5f;
+            --warning-amber: #ff9900;
+            --text-main: #ffffff;
+            --text-muted: #94a3b8;
+            --border-error: rgba(255, 42, 95, 0.25);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: '-apple-system', BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        html, body {
+            height: 100%;
+            min-height: 100vh;
+            background-color: var(--bg-deep);
+            color: var(--text-main);
+            overflow: hidden;
+        }
+
+        body {
+            background-image: var(--bg-glow-gradient);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            position: relative;
+        }
+
+        /* Tech Grid Overlay with a subtle crimson tint change */
+        body::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                linear-gradient(rgba(255, 42, 95, 0.006) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255, 42, 95, 0.006) 1px, transparent 1px);
+            background-size: 50px 50px;
+            z-index: -1;
+        }
+
+        header {
+            padding: 24px 8%;
+            display: flex;
+            align-items: center;
+        }
+
+        .logo-box {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo-box span {
+            font-size: 1.15rem;
+            font-weight: 700;
+            color: var(--text-main);
+            letter-spacing: 0.5px;
+        }
+
+        /* Main Center Frame */
+        main {
+            max-width: 1200px;
+            width: 100%;
+            margin: 0 auto;
+            padding: 0 6%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 80px;
+        }
+
+        .error-content {
+            max-width: 480px;
+            animation: renderSlide 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+
+        .error-badge {
+            display: inline-block;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            color: var(--error-red);
+            background: rgba(255, 42, 95, 0.08);
+            border: 1px solid var(--error-red);
+            padding: 8px 18px;
+            border-radius: 4px;
+            margin-bottom: 20px;
+        }
+
+        .error-content h1 {
+            font-size: 5.5rem;
+            font-weight: 900;
+            line-height: 1;
+            margin-bottom: 10px;
+            letter-spacing: -3px;
+            background: linear-gradient(90deg, #ffffff 0%, var(--error-red) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .error-content h2 {
+            font-size: 1.6rem;
+            font-weight: 700;
+            margin-bottom: 15px;
+            color: #e2e8f0;
+        }
+
+        .error-content p {
+            font-size: 1rem;
+            line-height: 1.65;
+            color: var(--text-muted);
+            margin-bottom: 35px;
+        }
+
+        /* Modern Action Button */
+        .btn-home {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(90deg, #250912 0%, rgba(255, 42, 95, 0.2) 100%);
+            border: 1px solid var(--error-red);
+            color: var(--text-main);
+            padding: 14px 32px;
+            border-radius: 6px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            text-decoration: none;
+            letter-spacing: 0.5px;
+            transition: all 0.3s ease;
+            box-shadow: 0 0 20px rgba(255, 42, 95, 0.1);
+        }
+
+        .btn-home:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 0 30px rgba(255, 42, 95, 0.3);
+            background: var(--error-red);
+            color: #040306;
+        }
+
+        /* 3D Broken Server Art Asset */
+        .hardware-stage {
+            perspective: 2000px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .isometric-rig {
+            transform: rotateX(35deg) rotateZ(-40deg);
+            transform-style: preserve-3d;
+            animation: floatingDown 5s ease-in-out infinite;
+        }
+
+        .server-rack-tower {
+            width: 260px;
+            height: 360px;
+            background: linear-gradient(135deg, #160c11 0%, #050204 100%);
+            border-radius: 12px;
+            border: 1px solid rgba(255, 42, 95, 0.25);
+            box-shadow: -25px 35px 70px rgba(0, 0, 0, 0.95);
+            padding: 20px 14px;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            position: relative;
+        }
+
+        /* Global Tower Overload Pulse Overlay effect for 500 page */
+        .server-rack-tower::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border-radius: 12px;
+            box-shadow: inset 0 0 15px rgba(255, 42, 95, 0.2);
+            pointer-events: none;
+            animation: rackSurge 2s infinite ease-in-out;
+        }
+
+        /* Malfunctioning System Modules */
+        .server-blade-unit {
+            height: 22px;
+            background: #0b0609;
+            border-radius: 4px;
+            border-bottom: 2px solid #000;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            padding: 0 10px;
+        }
+
+        .server-blade-unit::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            height: 100%;
+            width: 3px;
+            background: var(--error-red);
+            box-shadow: 0 0 6px var(--error-red);
+        }
+
+        /* Completely Jammed/Offline Fans */
+        .dead-fan {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            border: 1px solid rgba(255, 42, 95, 0.25);
+            background: #020102;
+        }
+
+        .error-led-cluster {
+            margin-left: auto;
+            display: flex;
+            gap: 4px;
+        }
+
+        .led-dot {
+            width: 4px;
+            height: 4px;
+            border-radius: 50%;
+            background-color: #1a050a;
+        }
+
+        /* Fast erratic blinking style indicating a severe system execution fault */
+        .led-dot.glitch-critical {
+            background-color: var(--error-red);
+            box-shadow: 0 0 8px var(--error-red);
+            animation: criticalBlink 0.15s infinite alternate;
+        }
+
+        .led-dot.glitch-warn {
+            background-color: var(--warning-amber);
+            box-shadow: 0 0 6px var(--warning-amber);
+            animation: criticalBlink 0.35s infinite alternate-reverse;
+        }
+
+        @keyframes criticalBlink {
+            0% { opacity: 0.1; filter: brightness(0.4); }
+            100% { opacity: 1; filter: brightness(1.7); }
+        }
+
+        @keyframes rackSurge {
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 1; }
+        }
+
+        @keyframes floatingDown {
+            0%, 100% { transform: rotateX(35deg) rotateZ(-40deg) translateY(0); }
+            50% { transform: rotateX(33deg) rotateZ(-38deg) translateY(-12px); }
+        }
+
+        @keyframes renderSlide {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        footer {
+            padding: 24px 8%;
+            border-top: 1px solid rgba(255, 42, 95, 0.04);
+            font-size: 0.82rem;
+            color: var(--text-muted);
+            text-align: center;
+        }
+
+        @media (max-width: 900px) {
+            main {
+                flex-direction: column;
+                text-align: center;
+                gap: 40px;
+            }
+            .error-content { max-width: 100%; }
+            .hardware-stage { transform: scale(0.8); }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="logo-box">
+            <span>SRP Digital Studios</span>
+        </div>
+    </header>
+
+    <main>
+        <section class="error-content">
+            <div class="error-badge">Internal Core Failure</div>
+            <h1>500</h1>
+            <h2>Internal Backplane Collapse</h2>
+            <p>The system backend application engine runtime environment broke due to an invalid request stream, database mismatch, or an unhandled structural syntax crash. The operations engineering desk has been pinged.</p>
+            <a href="index.html" class="btn-home">Return To Control Center</a>
+        </section>
+
+        <section class="hardware-stage">
+            <div class="isometric-rig">
+                <div class="server-rack-tower">
+                    
+                    <div class="server-blade-unit">
+                        <div class="dead-fan"></div>
+                        <div class="error-led-cluster"><div class="led-dot glitch-critical"></div><div class="led-dot"></div></div>
+                    </div>
+                    <div class="server-blade-unit">
+                        <div class="dead-fan"></div>
+                        <div class="error-led-cluster"><div class="led-dot"></div><div class="led-dot glitch-warn"></div></div>
+                    </div>
+                    <div class="server-blade-unit">
+                        <div class="dead-fan"></div>
+                        <div class="error-led-cluster"><div class="led-dot glitch-critical"></div><div class="led-dot glitch-critical"></div></div>
+                    </div>
+                    <div class="server-blade-unit">
+                        <div class="dead-fan"></div>
+                        <div class="error-led-cluster"><div class="led-dot"></div><div class="led-dot"></div></div>
+                    </div>
+                    <div class="server-blade-unit">
+                        <div class="dead-fan"></div>
+                        <div class="error-led-cluster"><div class="led-dot glitch-warn"></div><div class="led-dot"></div></div>
+                    </div>
+                    <div class="server-blade-unit">
+                        <div class="dead-fan"></div>
+                        <div class="error-led-cluster"><div class="led-dot glitch-critical"></div><div class="led-dot"></div></div>
+                    </div>
+                    <div class="server-blade-unit">
+                        <div class="dead-fan"></div>
+                        <div class="error-led-cluster"><div class="led-dot"></div><div class="led-dot glitch-warn"></div></div>
+                    </div>
+                    <div class="server-blade-unit">
+                        <div class="dead-fan"></div>
+                        <div class="error-led-cluster"><div class="led-dot glitch-critical"></div><div class="led-dot glitch-critical"></div></div>
+                    </div>
+                    <div class="server-blade-unit">
+                        <div class="dead-fan"></div>
+                        <div class="error-led-cluster"><div class="led-dot"></div><div class="led-dot"></div></div>
+                    </div>
+                    <div class="server-blade-unit">
+                        <div class="dead-fan"></div>
+                        <div class="error-led-cluster"><div class="led-dot glitch-warn"></div><div class="led-dot"></div></div>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        &copy; 2026 SRP Digital Studios. Automated Core Application Crash Protection Shield.
+    </footer>
+
+</body>
+</html>
